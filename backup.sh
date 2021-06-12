@@ -19,10 +19,15 @@ sqlDump="pg_dump" #Program for create sql dump file. Example pg_dump or mysqldum
 
 ####SYSTEM BLOCK####
 
-if [ -v $sqlDump ] then $sqlDump $dbName > temp_$dbName.sql
+if [ -v $sqlDump ] then 
+  $sqlDump $dbName > temp_$dbName.sql
+fi
+
 archive=$nameArchive$date$formatArchive
 cd $wherePath
 $backupProgram $typeRecord $archive temp_$dbName.sql
-if [ -v $sqlDump ] then rm -rf temp_$dbName.sql
 
+if [ -v $sqlDump ] then 
+  rm -rf temp_$dbName.sql
+fi
 ####END####
