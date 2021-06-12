@@ -2,32 +2,34 @@
 
 #Backup script for Linux family OS
 
-####USER BLOCK####
+####USER PART####
 
-#Enter path on file or folder for backup:
+#dbName="test" #Name you data base in system. If you want to backup database.
+#sqlDump="pg_dump" #Program for create sql dump file. Example pg_dump or mysqldump
+#Attention: For correct work script comment line "dbName" and "sqlDump" if you create not sql backup.
+#Attention: For correct work script uncomment line "dbName" and "sqlDump" if you create sql backup.
 
-dbName="test" #Name you data base in system. If you want to backup database.
 whatCopy="/var/www" # What copy
-wherePath="/mount/hdd_storage/backup/1C/" # Wehre copy. The end of the line must be /
-backupProgram="7za" #Chooice program for create archive with backup files. Example: 7za or tar.
-nameArchive="1C_SQL_backup_" #Name you archev with backup
-typeRecord="a" #Key record for create archive
+
+wherePath="/" # Wehre copy. The end of the line must be /
+backupProgram="tar" #Chooice program for create archive with backup files. Example: 7za or tar.
+nameArchive="_www" #Name you archev with backup
+typeRecord="-cvzf" #Key record for create archive Example: for 7za key = a or for tar key = -cvzf
 date=`date +%d-%m-%y` #Data create backup
-formatArchive=".7z" #Format create archive
-sqlDump="pg_dump" #Program for create sql dump file. Example pg_dump or mysqldump
-#Attention: For correct work script comment line "sqlDump" if you create not sql backup.
+formatArchive=".7z" #Format create archive Example: for 7za key = .7za or for tar ket = .tar.gz
 
-####SYSTEM BLOCK####
-
-if [ -v $sqlDump ] then 
-  $sqlDump $dbName > temp_$dbName.sql
-fi
-
-archive=$nameArchive$date$formatArchive
+####SYSTEM PART####
 cd $wherePath
-$backupProgram $typeRecord $archive temp_$dbName.sql
 
-if [ -v $sqlDump ] then 
-  rm -rf temp_$dbName.sql
+if [ -v $sqlDump && -v $dbName] 
+then 
+ $sqlDump $dbName > $dbName.sql
+ archive=$date$nameArchive$formatArchive
+ $backupProgram $typeRecord $archive $dbName.sql
+ rm -rf $dbName.sql
+else 
+ archive=$date$nameArchive$formatArchive
+ $backupProgram $typeRecord $archive $whatCopy
 fi
+
 ####END####
